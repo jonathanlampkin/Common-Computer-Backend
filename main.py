@@ -83,9 +83,7 @@ def summarize(chunks):
     try:
         chunked_summaries = summarizer(chunks, batch_size=batch_size, truncation=True, do_sample=True, top_k=0, typical_p=0.7, early_stopping=True)
         combined_summaries = ' '.join([item['summary_text'] for item in chunked_summaries])
-        result = dict()
-        result['prediction'] = summarizer(combined_summaries, max_length=200, do_sample=True, typical_p=0.7, top_k=0, early_stopping=True)[0]['summary_text']
-        return jsonify(result)
+        return summarizer(combined_summaries, max_length=200, do_sample=True, typical_p=0.7, top_k=0, early_stopping=True)[0]['summary_text']
     except:
         return "pipeline didn't work"
 
@@ -96,12 +94,13 @@ def sentiment(chunks):
     try:
         sentiments = classifier(' '.join(chunks), truncation=True, padding=True)[0]
         sentiment_scores = dict(sorted({dictionary['label']: dictionary['score'] for dictionary in sentiments}.items(), key=lambda x: x[1], reverse=True))
-        return jsonify(sentiment_scores)
+        return sentiment_scores
     except:
         return "sentiment algo failed"
 
 
 def make_story(base_text):
+    result = dict()
     try:
         json_response = connect_to_endpoint(base_text)
         tweets = clean_tweets(json_response)
@@ -109,10 +108,10 @@ def make_story(base_text):
     except Exception as e:
         print('Error pulling tweets', e)
         return jsonify({'error': e}), 500
-
     try:
-        summary, classifications = summarize(chunks), sentiment(chunks)
-        return summary, classifications
+        result['prediction'] = summarize(chunks)
+        result['sentiment'] = sentiment(chunks)
+        return jsonify(result)
     except Exception as e:
         print('Summarizer failed', e)
         return jsonify({'error': e}), 500
@@ -125,9 +124,9 @@ def main():
     except Exception as e:
         return jsonify({'message': 'Invalid request'}), 500
 
-    summary, classifications = make_story(base_text)
+    summary_and_sentiment = make_story(base_text)
 
-    return classifications
+    return summary_and_sentiment
 
 
 if __name__ == "__main__":
