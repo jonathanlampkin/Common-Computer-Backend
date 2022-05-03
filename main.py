@@ -127,7 +127,7 @@ def main():
 
     summary, classifications = make_story(base_text)
 
-    return summary, classifications
+    return classifications
 
 
 if __name__ == "__main__":
