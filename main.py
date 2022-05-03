@@ -80,7 +80,7 @@ def summarize(chunks):
         chunked_summaries = summarizer(chunks, batch_size=batch_size, truncation=True, do_sample=True, top_k=0, typical_p=0.7,early_stopping=True)
         combined_summaries = ' '.join([item['summary_text'] for item in chunked_summaries])
         result = dict()
-        result['prediction'] = summarizer(combined_summaries, max_length=200, do_sample=True, typical_p=0.7, top_k=0,early_stopping=True)
+        result['prediction'] = summarizer(combined_summaries, max_length=200, do_sample=True, typical_p=0.7, top_k=0,early_stopping=True)[0]['summary_text']
         return jsonify(result)
     except:
         return "pipeline didnt work"
