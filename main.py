@@ -117,7 +117,7 @@ def make_story(base_text):
 
     try:
         summary, chart = summarize(chunks), sentiment(chunks)
-        return summary
+        return summary, chart
     except Exception as e:
         print('Summarizer failed', e)
         return jsonify({'error': e}), 500
@@ -130,9 +130,9 @@ def main():
     except Exception as e:
         return jsonify({'message': 'Invalid request'}), 500
 
-    summary = make_story(base_text)
+    summary, chart = make_story(base_text)
 
-    return summary
+    return summary, chart
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
