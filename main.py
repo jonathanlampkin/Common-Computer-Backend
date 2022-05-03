@@ -95,7 +95,7 @@ def sentiment(chunks):
                reverse=True))
     fig = plt.figure()
     sns.barplot(x=list(sentiment_scores.keys()), y=list(sentiment_scores.values())).set(title='Sentiment Scores')
-    return jsonify(fig)
+    return jsonify(fig) #may not be able to jsonify this
 
 
 def make_story(base_text):
@@ -108,8 +108,8 @@ def make_story(base_text):
         return jsonify({'error': e}), 500
 
     try:
-        result = (summarize(chunks), sentiment(chunks))
-        return result
+        summary, chart = summarize(chunks), sentiment(chunks)
+        return summary, chart
     except Exception as e:
         print('Summarizer failed', e)
         return jsonify({'error': e}), 500
@@ -122,9 +122,9 @@ def main():
     except Exception as e:
         return jsonify({'message': 'Invalid request'}), 500
 
-    prediction = make_story(base_text)
+    summary, chart = make_story(base_text)
 
-    return prediction
+    return summary, chart
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
