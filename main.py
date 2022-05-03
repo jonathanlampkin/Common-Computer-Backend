@@ -3,7 +3,7 @@ import requests
 
 def send_request(text):
     try:
-        api_url = 'https://main-common-computer-jonathanlampkin.endpoint.ainize.ai/summarize'
+        api_url = 'https://main-common-computer-backend-jonathanlampkin.endpoint.ainize.ai/summarize'
         files = {'base_text': (None, text)}
         response = requests.post(api_url, files=files)
         status_code = response.status_code
