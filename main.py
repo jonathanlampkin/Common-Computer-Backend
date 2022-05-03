@@ -1,18 +1,22 @@
 # Default python packages
 import base64
+import io
 import re
 import json
 import os
 
+
 # Pip installed python packages
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import numpy as np
 import seaborn as sns
 import torch
 from transformers import pipeline, AutoModelForSeq2SeqLM, AutoModelForSequenceClassification, AutoTokenizer
 import requests
+#import PIL
 
 from dotenv import load_dotenv
 
@@ -99,9 +103,14 @@ def sentiment(chunks):
     except:
         return "sentiment algo failed"
     try:
-        chart = dict()
-        chart['chart'] = base64.b64encode(fig)
-        return jsonify(chart) #may not be able to jsonify this
+        canvas = FigureCanvas(fig)
+        img = io.BytesIO()
+        fig.savefig(img)
+        img.seek(0)
+        return send_file(img,mimetype='img/png')
+        # chart = dict()
+        # chart['chart'] = base64.b64encode(fig)
+        # return jsonify(chart) #may not be able to jsonify this
     except:
         return "sentiment chart failed"
 
@@ -132,7 +141,7 @@ def main():
 
     summary, chart = make_story(base_text)
 
-    return summary
+    return chart
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
