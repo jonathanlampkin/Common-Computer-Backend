@@ -112,7 +112,7 @@ def make_story(base_text):
         return jsonify({'error': e}), 500
 
     try:
-        summary, chart = summarize(chunks), sentiment(chunks)
+        summary = summarize(chunks)
         return summary
     except Exception as e:
         print('Summarizer failed', e)
