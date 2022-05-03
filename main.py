@@ -28,11 +28,11 @@ summarizer_path = './summarizer_model'
 summarizer_tokenizer = AutoTokenizer.from_pretrained(summarizer_path, padding=True, truncation=True)
 summarizer_model = AutoModelForSeq2SeqLM.from_pretrained(summarizer_path)
 summarizer = pipeline('summarization', model=summarizer_model,tokenizer=summarizer_tokenizer, device=device)
-#
-# classifier_path = './sentiment_model'
-# classifier_tokenizer = AutoTokenizer.from_pretrained(classifier_path, padding=True, truncation=True)
-# classifier_model = AutoModelForSequenceClassification.from_pretrained(classifier_path)
-# classifier = pipeline('sentiment-analysis', model=classifier_model,tokenizer=classifier_tokenizer, return_all_scores=True)#device=0)
+
+classifier_path = './sentiment_model'
+classifier_tokenizer = AutoTokenizer.from_pretrained(classifier_path, padding=True, truncation=True)
+classifier_model = AutoModelForSequenceClassification.from_pretrained(classifier_path)
+classifier = pipeline('sentiment-analysis', model=classifier_model,tokenizer=classifier_tokenizer, return_all_scores=True, device=device)
 
 def bearer_oauth(r):
     """
@@ -86,38 +86,16 @@ def summarize(chunks):
         return "pipeline didnt work"
 
 
-# def sentiment(chunks):
-#     """Plots sentiment scores."""
-#     print('Calculating Sentiment...')
-#     sentiments = classifier(' '.join(chunks), truncation=True, padding=True)[0]
-#     sentiment_scores = dict(
-#         sorted({dictionary['label']: dictionary['score'] for dictionary in sentiments}.items(), key=lambda x: x[1],
-#                reverse=True))
-#     fig = plt.figure()
-#     sns.barplot(x=list(sentiment_scores.keys()), y=list(sentiment_scores.values())).set(title='Sentiment Scores')
-#     return fig
-
-
-# @app.route("/summarize", methods=["GET"]) # try if get: if post:
-# def main():
-#     try:
-#         json_response = connect_to_endpoint('will smith')
-#     except:
-#         return "twitter connection fail"
-#     try:
-#         tweets = clean_tweets(json_response)
-#     except:
-#         return "clean tweets failed"
-#     try:
-#         chunks = chunk(tweets)
-#     except:
-#         return "failed to chunk"
-#     try:
-#         result = summarize(chunks)
-#         return result
-#     except Exception as e:
-#         return "failed to summarize tweets"
-######################################################################################################
+def sentiment(chunks):
+    """Plots sentiment scores."""
+    print('Calculating Sentiment...')
+    sentiments = classifier(' '.join(chunks), truncation=True, padding=True)[0]
+    sentiment_scores = dict(
+        sorted({dictionary['label']: dictionary['score'] for dictionary in sentiments}.items(), key=lambda x: x[1],
+               reverse=True))
+    fig = plt.figure()
+    sns.barplot(x=list(sentiment_scores.keys()), y=list(sentiment_scores.values())).set(title='Sentiment Scores')
+    return jsonify(fig)
 
 
 def make_story(base_text):
@@ -130,14 +108,14 @@ def make_story(base_text):
         return jsonify({'error': e}), 500
 
     try:
-        result = summarize(chunks)
+        result = (summarize(chunks), sentiment(chunks))
         return result
     except Exception as e:
         print('Summarizer failed', e)
         return jsonify({'error': e}), 500
 
 
-@app.route("/summarize", methods=["POST"])
+@app.route("/summarize", methods=["GET"])
 def main():
     try:
         base_text = request.form.get('base_text')
