@@ -5,7 +5,7 @@ from PIL import Image
 
 def send_request(text):
     api_url = 'https://main-common-computer-backend-jonathanlampkin.endpoint.ainize.ai/summarize'
-    files = {'image': file}
+    files = {'image': text}
     response = requests.post(api_url, files=files)
     status_code = response.status_code
 
