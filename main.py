@@ -1,20 +1,20 @@
 # Default python packages
 import base64
 import re
-# import json
-# import os
+import json
+import os
 
 # Pip installed python packages
 
 from flask import Flask, request, jsonify
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
-#import seaborn as sns
+import seaborn as sns
 import torch
 from transformers import pipeline, AutoModelForSeq2SeqLM, AutoModelForSequenceClassification, AutoTokenizer
 import requests
 
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 
@@ -91,15 +91,19 @@ def summarize(chunks):
 def sentiment(chunks):
     """Plots sentiment scores."""
     print('Calculating Sentiment...')
-    sentiments = classifier(' '.join(chunks), truncation=True, padding=True)[0]
-    sentiment_scores = dict(
-        sorted({dictionary['label']: dictionary['score'] for dictionary in sentiments}.items(), key=lambda x: x[1],
-               reverse=True))
-    fig = plt.figure()
-    sns.barplot(x=list(sentiment_scores.keys()), y=list(sentiment_scores.values())).set(title='Sentiment Scores')
-    chart = dict()
-    chart['chart'] = base64.b64encode(fig)
-    return jsonify(chart) #may not be able to jsonify this
+    try:
+        sentiments = classifier(' '.join(chunks), truncation=True, padding=True)[0]
+        sentiment_scores = dict(sorted({dictionary['label']: dictionary['score'] for dictionary in sentiments}.items(), key=lambda x: x[1], reverse=True))
+        fig = plt.figure()
+        sns.barplot(x=list(sentiment_scores.keys()), y=list(sentiment_scores.values())).set(title='Sentiment Scores')
+    except:
+        return "sentiment algo failed"
+    try:
+        chart = dict()
+        chart['chart'] = base64.b64encode(fig)
+        return jsonify(chart) #may not be able to jsonify this
+    except:
+        return "sentiment chart failed"
 
 
 def make_story(base_text):
@@ -112,7 +116,7 @@ def make_story(base_text):
         return jsonify({'error': e}), 500
 
     try:
-        summary = summarize(chunks)
+        summary, chart = summarize(chunks), sentiment(chunks)
         return summary
     except Exception as e:
         print('Summarizer failed', e)

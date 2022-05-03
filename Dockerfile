@@ -11,7 +11,8 @@ WORKDIR /app
 # RUN apt-get install -y python3 python3-pip
 # RUN pip3 install --upgrade pip
 # RUN pip3 install --upgrade setuptools
-RUN pip3 install numpy requests flask transformers==4.17.0 torch==1.8.2+cu111 torchvision==0.9.2+cu111 torchaudio===0.8.2 -f https://download.pytorch.org/whl/lts/1.8/torch_lts.html
+
+RUN pip3 install matplotlib seaborn numpy python-dotenv==0.20.0 requests flask transformers==4.17.0 torch==1.8.2+cu111 torchvision==0.9.2+cu111 torchaudio===0.8.2 -f https://download.pytorch.org/whl/lts/1.8/torch_lts.html
 # --------------------------------------------------------------------------------------------------------------------
 #EXPOSE 8000
 
@@ -25,7 +26,7 @@ COPY . .
 # COPY ./bearer_token_folder /app/bearer_token_folder
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #RUN pip3 install matplotlib==3.5.1 numpy==1.21.6 python-dotenv==0.20.0 requests==2.27.1 Flask==2.1.1 seaborn==0.11.2 transformers==4.17.0 torch==1.8.2+cu111 torchvision==0.9.2+cu111 torchaudio===0.8.2 -f https://download.pytorch.org/whl/lts/1.8/torch_lts.html
-#RUN pip3 install matplotlib numpy python-dotenv==0.20.0 requests Flask seaborn transformers==4.17.0 torch==1.8.2+cu111 torchvision==0.9.2+cu111 torchaudio===0.8.2 -f https://download.pytorch.org/whl/lts/1.8/torch_lts.html
+
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------
 CMD ["python3", "main.py"]
