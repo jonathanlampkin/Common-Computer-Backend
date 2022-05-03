@@ -1,9 +1,11 @@
 # Default python packages
+import base64
 import re
 # import json
 # import os
 
 # Pip installed python packages
+
 from flask import Flask, request, jsonify
 #import matplotlib.pyplot as plt
 import numpy as np
@@ -95,7 +97,9 @@ def sentiment(chunks):
                reverse=True))
     fig = plt.figure()
     sns.barplot(x=list(sentiment_scores.keys()), y=list(sentiment_scores.values())).set(title='Sentiment Scores')
-    return jsonify(fig) #may not be able to jsonify this
+    chart = dict()
+    chart['chart'] = base64.b64encode(fig)
+    return jsonify(chart) #may not be able to jsonify this
 
 
 def make_story(base_text):
@@ -109,7 +113,7 @@ def make_story(base_text):
 
     try:
         summary, chart = summarize(chunks), sentiment(chunks)
-        return summary, chart
+        return summary
     except Exception as e:
         print('Summarizer failed', e)
         return jsonify({'error': e}), 500
@@ -122,9 +126,9 @@ def main():
     except Exception as e:
         return jsonify({'message': 'Invalid request'}), 500
 
-    summary, chart = make_story(base_text)
+    summary = make_story(base_text)
 
-    return summary, chart
+    return summary
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
