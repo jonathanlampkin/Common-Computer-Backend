@@ -137,7 +137,7 @@ def make_story(base_text):
         return jsonify({'error': e}), 500
 
 
-@app.route("/summarize", methods=["POST"])
+@app.route("/summarize", methods=["GET"])
 def main():
     try:
         base_text = request.form.get('base_text')
