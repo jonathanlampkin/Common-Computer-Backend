@@ -1,0 +1,49 @@
+openapi: 3.0.1
+
+info:
+  title: People's Thoughts
+  version: 1.0.0
+  contact:
+    name: Jonathan
+    email: jmlampkin@gmail.com
+  description: |
+    Summarize and Classify Sentiment of tweets using HuggingFace pretrained bart and distilroberta models.
+    ---
+          How to use:
+          * Enter a search phrase.
+    ---
+servers:
+  - url: https://main-common-computer-backend-jonathanlampkin.endpoint.ainize.ai
+
+paths:
+  post:
+    requestBody:
+      required: true
+      description: |
+        This request will generate a summary and sentiment of the tweets related to the search phrase.
+        curl example
+            curl -X POST "https://master-common-computers-jonathanlampkin.endpoint.ainize.ai/"
+            -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "base_text=one day"
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              base_text:
+                type: string
+                description: "Search Phrase for Twitter"
+            required:
+              - text
+    responses:
+      '200':
+        description: "Successful Response"
+        content:
+          application/json:
+            schema:
+              type: object
+      '400':
+        description: "Bad Request Error"
+      '429':
+        description: "Too many requests"
+      '500':
+        description: "Server-side Error"
