@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import pandas as pd
 import requests
 import seaborn as sns
 import streamlit as st
@@ -22,7 +21,7 @@ if st.button("Submit"):
         prediction = response.json()
         st.success(prediction["prediction"])
         fig, ax = plt.subplots()
-        sns.barplot(ax=ax, x=list(sentiment_scores.keys()), y=list(sentiment_scores.values())).set(title='Sentiment Scores')
+        sns.barplot(ax=ax, x=list(prediction['sentiment'].keys()), y=list(prediction['sentiment'].values())).set(title='Sentiment Scores')
         st.pyplot(fig)
     else:
         st.error(str(status_code) + " Error")

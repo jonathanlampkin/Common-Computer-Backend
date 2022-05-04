@@ -2,7 +2,7 @@ FROM python:3.9
 
 WORKDIR /app
 
-RUN pip3 install pandas requests streamlit matplotlib seaborn
+RUN pip3 install requests streamlit matplotlib seaborn
 
 COPY . .
 
