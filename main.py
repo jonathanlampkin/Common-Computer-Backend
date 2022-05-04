@@ -14,7 +14,7 @@ def send_request(text):
 st.title("People's Thoughts Demo")
 st.header("Generate Twitter Summary and Sentiment")
 
-base_story = st.text_input("Type Search Phrase", "\"Johnny Depp\"")
+base_story = st.text_input("Type Search Phrase", "\"Will Smith\"")
 if st.button("Submit"):
     status_code, response = send_request(base_story)
     if status_code == 200:
