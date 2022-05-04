@@ -19,6 +19,6 @@ if st.button("Submit"):
     if status_code == 200:
         prediction = response.json()
         st.success(prediction["prediction"])
-        st.bar_chart(pd.DataFrame.from_dict(prediction['sentiment']))
+        st.bar_chart(pd.DataFrame.from_dict(prediction['sentiment'],index=[0]))
     else:
         st.error(str(status_code) + " Error")
