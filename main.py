@@ -1,14 +1,14 @@
 # Default python packages
-import re
 import json
 import os
+import re
 
 # Pip installed python packages
 from flask import Flask, request, jsonify
 import numpy as np
+import requests
 import torch
 from transformers import pipeline, AutoModelForSeq2SeqLM, AutoModelForSequenceClassification, AutoTokenizer
-import requests
 
 app = Flask(__name__)
 
@@ -46,13 +46,13 @@ def connect_to_endpoint(query):
         print('Pulling Tweets...')
         url = 'https://api.twitter.com/2/tweets/search/recent'
         query = f"-is:retweet lang:en -has:links -has:media {query}"
-        query_params = {'query': query, 'max_results': 100}  # , 'tweet.fields': 'public_metrics'}
+        query_params = {'query': query, 'max_results': 100}
         response = requests.get(url, auth=bearer_oauth, params=query_params)
         data = []
         data.append([tweet['text'] for tweet in response.json()['data']])
         return data
-    except:
-        return "issue pulling from twitter"
+    except Exception as e:
+        return jsonify({"issue pulling from twitter": e}), 500
 
 
 def apply_regexes(tweet):
@@ -82,8 +82,8 @@ def summarize(chunks):
         chunked_summaries = summarizer(chunks, batch_size=batch_size, truncation=True, do_sample=True, top_k=0, typical_p=0.7, early_stopping=True)
         combined_summaries = ' '.join([item['summary_text'] for item in chunked_summaries])
         return summarizer(combined_summaries, max_length=200, do_sample=True, typical_p=0.7, top_k=0, early_stopping=True)[0]['summary_text']
-    except:
-        return "pipeline didn't work"
+    except Exception as e:
+        return jsonify({"summarizer error": e}), 500
 
 
 def sentiment(chunks):
@@ -93,8 +93,8 @@ def sentiment(chunks):
         sentiments = classifier(' '.join(chunks), truncation=True, padding=True)[0]
         sentiment_scores = dict(sorted({dictionary['label']: dictionary['score'] for dictionary in sentiments}.items(), key=lambda x: x[1], reverse=True))
         return sentiment_scores
-    except:
-        return "sentiment algo failed"
+    except Exception as e:
+        return jsonify({"classifier error": e}), 500
 
 
 def make_story(base_text):
@@ -104,26 +104,22 @@ def make_story(base_text):
         tweets = clean_tweets(json_response)
         chunks = chunk(tweets)
     except Exception as e:
-        print('Error pulling tweets', e)
-        return jsonify({'error': e}), 500
+        return jsonify({'twitter pull or data processing error': e}), 500
     try:
         result['prediction'] = summarize(chunks)
         result['sentiment'] = sentiment(chunks)
         return jsonify(result)
     except Exception as e:
-        print('Summarizer failed', e)
-        return jsonify({'error': e}), 500
+        return jsonify({'summarizer or classification error': e}), 500
 
 
-@app.route("/summarize", methods=["GET"])
+@app.route("/summarize", methods=["POST"])
 def main():
     try:
         base_text = request.form.get('base_text')
     except Exception as e:
-        return jsonify({'message': 'Invalid request'}), 500
-
+        return jsonify({'did not pull from backend':e}), 500
     summary_and_sentiment = make_story(base_text)
-
     return summary_and_sentiment
 
 
