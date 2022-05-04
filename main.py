@@ -22,6 +22,3 @@ if st.button("Submit"):
         st.bar_chart(pd.DataFrame.from_dict(prediction['sentiment']))
     else:
         st.error(str(status_code) + " Error")
-
-        fig = plt.figure()
-        sns.barplot(x=list(sentiment_scores.keys()), y=list(sentiment_scores.values())).set(title='Sentiment Scores')
