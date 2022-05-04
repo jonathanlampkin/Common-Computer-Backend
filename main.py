@@ -1,6 +1,7 @@
-import streamlit as st
-import requests
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
 
 def send_request(text):
     api_url = 'https://main-common-computer-backend-jonathanlampkin.endpoint.ainize.ai/summarize'
@@ -19,6 +20,8 @@ if st.button("Submit"):
     if status_code == 200:
         prediction = response.json()
         st.success(prediction["prediction"])
-        st.bar_chart(pd.DataFrame(prediction['sentiment'], index=[0]))
+        fig, ax = plt.subplots()
+        sns.barplot(ax=ax, x=list(sentiment_scores.keys()), y=list(sentiment_scores.values())).set(title='Sentiment Scores')
+        st.pyplot(fig)
     else:
         st.error(str(status_code) + " Error")
