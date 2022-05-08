@@ -2,7 +2,7 @@
 
 In this repository is the code used to build the backend of the [People's Thoughts](https://main-common-computer-jonathanlampkin.endpoint.ainize.ai/) program deployed on [Ainize](https://ainize.ai/).
 
-*How to use this backend:*
+<h5>How to use this backend:</h5>
 
 1. git clone https://github.com/jonathanlampkin/Common-Computer-Backend.git
 
@@ -12,7 +12,13 @@ In this repository is the code used to build the backend of the [People's Though
 
 4. docker run -p 8000:8000 {project-name}:{tag} 
 
+<h5>Parameters</h5>
 
+- base_text: Search Query
+
+<h5>Output format</h5>
+
+- {'prediction': {'prediction': Summary, 'sentiment': sentiment classifications (unordered)}}
 
 This program will quickly and simply summarize what twitter users have to say about whatever topic you want and show you how others feel about it.
 
