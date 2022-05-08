@@ -1,4 +1,4 @@
-<h1>Twitter Tweets Summarizer and Sentiment Classifier By Jonathan Lampkin</h1>
+<h2>Twitter Tweets Summarizer and Sentiment Classifier By Jonathan Lampkin</h2>
 
 In this repository is the code used to build the backend of the [People's Thoughts](https://main-common-computer-jonathanlampkin.endpoint.ainize.ai/) program deployed on [Ainize](https://ainize.ai/).
 
