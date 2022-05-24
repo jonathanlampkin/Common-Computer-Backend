@@ -1,5 +1,8 @@
 <h2>Twitter Tweets Summarizer and Sentiment Classifier By Jonathan Lampkin</h2>
 
+[![Run on Ainize](https://ainize.ai/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=https://github.com/jonathanlampkin/Common-Computer)
+
+
 In this repository is the code used to build the backend of the [People's Thoughts](https://main-common-computer-jonathanlampkin.endpoint.ainize.ai/) program deployed on [Ainize](https://ainize.ai/).
 
 <h3>How to use this backend:</h3>
